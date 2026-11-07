@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.folderlens.FolderLens</id>
+  <name>Folder Lens</name>
+  <summary>Find what uses disk space</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="com.github.mirano-galijasevic">
+    <name>Mirano Galijasevic</name>
+  </developer>
+  <description>
+    <p>
+      Folder Lens scans a selected directory and shows which immediate files
+      and folders consume the most storage.
+    </p>
+    <p>
+      Scanning happens in the background. Folder Lens reads filesystem metadata
+      but does not delete, move, or modify scanned files.
+    </p>
+  </description>
+  <launchable type="desktop-id">dev.folderlens.FolderLens.desktop</launchable>
+  <url type="homepage">https://github.com/mirano-galijasevic/folder-lens</url>
+  <content_rating type="oars-1.1" />
+</component>

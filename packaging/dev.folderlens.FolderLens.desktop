@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Folder Lens
+Comment=Find what uses disk space
+Exec=folder-lens
+Icon=folder-lens
+Terminal=false
+Categories=Utility;Filesystem;
+Keywords=Disk;Storage;Folder;Usage;
+StartupNotify=true

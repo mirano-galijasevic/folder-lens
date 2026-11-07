@@ -1,0 +1,94 @@
+name: Build tagged release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  linux-packages:
+    name: Linux x86-64 packages
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out the tagged source
+        uses: actions/checkout@v4
+
+      - name: Validate tag and package version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tags must look like v0.1.0."
+            exit 1
+          fi
+
+          version="${GITHUB_REF_NAME#v}"
+          cargo_version="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "folder-lens") | .version')"
+
+          if [[ "${version}" != "${cargo_version}" ]]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match Cargo.toml version ${cargo_version}."
+            exit 1
+          fi
+
+          echo "VERSION=${version}" >> "${GITHUB_ENV}"
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libgtk-4-dev pkg-config
+
+      - name: Select the supported Rust toolchain
+        run: |
+          rustup toolchain install 1.92.0 --profile minimal
+          rustup default 1.92.0
+
+      - name: Test and build Folder Lens
+        run: |
+          cargo test --locked
+          cargo build --release --locked
+
+      - name: Install nFPM
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
+
+      - name: Build distribution packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          "${HOME}/go/bin/nfpm" package --config packaging/nfpm.yaml --packager deb \
+            --target "dist/folder-lens_${VERSION}_amd64.deb"
+          "${HOME}/go/bin/nfpm" package --config packaging/nfpm.yaml --packager rpm \
+            --target "dist/folder-lens-${VERSION}-1.x86_64.rpm"
+          "${HOME}/go/bin/nfpm" package --config packaging/nfpm.yaml --packager archlinux \
+            --target "dist/folder-lens-${VERSION}-1-x86_64.pkg.tar.zst"
+
+      - name: Build portable archive and checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="folder-lens-${VERSION}-linux-x86_64"
+          mkdir -p "dist/${archive}"
+          install -m 0755 target/release/folder-lens "dist/${archive}/folder-lens"
+          install -m 0644 README.md LICENSE "dist/${archive}/"
+          tar -C dist -czf "dist/${archive}.tar.gz" "${archive}"
+          rm -r "dist/${archive}"
+          (cd dist && sha256sum folder-lens* > SHA256SUMS)
+
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --verify-tag \
+            --generate-notes \
+            --title "Folder Lens ${VERSION}"
