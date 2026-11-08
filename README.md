@@ -2,7 +2,7 @@
 
 # Folder Lens
 
-**See what is taking up space—without touching your files.**
+**See what is taking up space - without touching your files.**
 
 A focused, native Linux disk-usage viewer built with Rust and GTK4.
 
@@ -18,7 +18,7 @@ A focused, native Linux disk-usage viewer built with Rust and GTK4.
 
 Folder Lens answers a simple question: **which items in this folder are using the most disk space?** Choose a directory and it recursively measures its contents, then presents the immediate files and folders as a searchable, sortable list with a visual space-distribution chart.
 
-Scanning runs on a worker thread, keeping the interface responsive even when a directory contains many files. Folder Lens reads directory entries and file metadata only—it never deletes, moves, or modifies scanned files.
+Scanning runs on a worker thread, keeping the interface responsive even when a directory contains many files. Folder Lens reads directory entries and file metadata only - it never deletes, moves, or modifies scanned files.
 
 ## Features
 
@@ -141,7 +141,7 @@ This initial release provides recursive background scanning, cancellation, searc
 
 ## Changes
 
-### 2026-11-07 — Initial stable application
+### 2026-11-07 - Initial stable application
 
 - Added a filesystem overview with capacity information for local and removable filesystems.
 - Added recursive, cancellable background scanning with live file, directory, byte, and error totals.
