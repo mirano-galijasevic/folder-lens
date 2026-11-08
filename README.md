@@ -6,6 +6,8 @@
 
 A focused, native Linux disk-usage viewer built with Rust and GTK4.
 
+A [SharpLogica](https://sharplogica.com/) project.
+
 [![Rust](https://img.shields.io/badge/Rust-1.92%2B-000000?logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![GTK](https://img.shields.io/badge/GTK-4-4A86CF?logo=gnome&logoColor=white)](https://www.gtk.org/)
 [![License](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
